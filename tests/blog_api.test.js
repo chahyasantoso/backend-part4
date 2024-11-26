@@ -71,4 +71,5 @@ test('blog without content is not added', async () => {
 
 after(async () => {
   await mongoose.connection.close()
+  process.exit()
 })

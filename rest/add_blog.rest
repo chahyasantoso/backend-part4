@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoYWh5YSIsIm5hbWUiOiJjaGFoeWEgc2FudG9zbyIsImlkIjoiNjc0NTc3ZDk3ZmQ0NjVhNjhlODA0MGZhIiwiaWF0IjoxNzMyNzE1ODM0fQ.JNRNKsis-dwwL5PimM4FnUrVN6hpumWfPrGMw_VcLDQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJuYW1lIjoiY2hhaHlhIHNhbnRvc28iLCJpZCI6IjY3NDg1MDdjNmY3OTJhZWNhMDkzMWEwYiIsImlhdCI6MTczMjc5MjU2OSwiZXhwIjoxNzMyNzk2MTY5fQ.t3EVpKazKMP_C5cpkcCaLxI8-FijGfHdqsWdrfUcdXc
 
 {
-    "title": "blog title with auth",
+    "title": "blog one",
     "author": "chahya santoso",
     "url": "http://xxx",
     "likes": 2

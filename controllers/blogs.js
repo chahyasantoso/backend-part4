@@ -50,7 +50,7 @@ router.delete("/:id", middleware.userExtractor, async (request, response) => {
     if (!blog) {
       return response.status(404).end()
     }
-    return response.status(401).json({ error: 'token invalid' })
+    return response.status(403).json({ error: 'delete forbidden' })
   }
 
   user.blogs = user.blogs.filter(blogId => blogId.toString() !== blog._id.toString())

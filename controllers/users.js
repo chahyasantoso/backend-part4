@@ -1,5 +1,4 @@
 const router = require("express").Router()
-const { default: mongoose } = require("mongoose")
 const User = require("../models/user")
 const bcrypt = require("bcryptjs")
 
@@ -33,32 +32,5 @@ router.post("/", async (request, response) => {
   const result = await user.save()
   response.status(201).json(result)
 })
-
-// blogsRouter.put("/:id", async (request, response) => {
-//   const id = request.params.id
-
-//   const updatedBlog = new Blog({...request.body})
-//   await updatedBlog.validate()
-
-//   const result = await Blog.findOneAndUpdate(
-//     {_id: id}, 
-//     {...request.body}, 
-//     {new: true, runValidators: true, context: 'query'}
-//   )
-//   if (!result) {
-//     return response.status(404).end()
-//   }
-//   return response.json(result)
-// })
-
-// blogsRouter.delete("/:id", async (request, response) => {
-//   const id = request.params.id
-
-//   const result = await Blog.findByIdAndDelete(id)
-//   if (!result) {
-//     return response.status(404).end()
-//   }
-//   return response.json(result)
-// })
 
 module.exports = router

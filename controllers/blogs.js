@@ -1,49 +1,63 @@
 const router = require("express").Router()
 const Blog = require("../models/blog")
-const User = require('../models/user')
+const middleware = require('../utils/middleware')
+
 
 router.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
   response.json(blogs)
 })
 
-router.post("/", async (request, response) => {
-  const user = await User.findOne({})
+router.post("/", middleware.userExtractor, async (request, response) => {  
+  const user = request.user
+  if (!user) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
 
   const blog = new Blog({...request.body, user: user._id})
-  const result = await blog.save()
+  const savedBlog = await blog.save()
 
-  user.blogs = [...user.blogs, result._id]
+  user.blogs = [...user.blogs, savedBlog._id]
   await user.save()
   
-  response.status(201).json(result)
+  response.status(201).json(savedBlog)
 })
 
 router.put("/:id", async (request, response) => {
-  const id = request.params.id
-
   const updatedBlog = new Blog({...request.body})
   await updatedBlog.validate()
 
   const result = await Blog.findOneAndUpdate(
-    {_id: id}, 
+    {_id: request.params.id}, 
     {...request.body}, 
     {new: true, runValidators: true, context: 'query'}
   )
   if (!result) {
     return response.status(404).end()
   }
-  return response.json(result)
+  response.json(result)
 })
 
-router.delete("/:id", async (request, response) => {
-  const id = request.params.id
-
-  const result = await Blog.findByIdAndDelete(id)
-  if (!result) {
-    return response.status(404).end()
+router.delete("/:id", middleware.userExtractor, async (request, response) => {
+  const user = request.user
+  if (!user) {
+    return response.status(401).json({ error: 'token invalid' })
   }
-  return response.json(result)
+
+  const blog = await Blog.findById(request.params.id)
+  const userMatch = user && blog ? user._id.toString() === blog.user.toString() : false
+  if (!userMatch) {
+    if (!blog) {
+      return response.status(404).end()
+    }
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  user.blogs = user.blogs.filter(blogId => blogId.toString() !== blog._id.toString())
+  await user.save()
+
+  await blog.deleteOne()
+  return response.json(blog)
 })
 
 module.exports = router

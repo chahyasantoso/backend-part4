@@ -27,8 +27,8 @@ router.put("/:id", async (request, response) => {
   const updatedBlog = new Blog({...request.body})
   await updatedBlog.validate()
 
-  const result = await Blog.findOneAndUpdate(
-    {_id: request.params.id}, 
+  const result = await Blog.findByIdAndUpdate(
+    request.params.id, 
     {...request.body}, 
     {new: true, runValidators: true, context: 'query'}
   )

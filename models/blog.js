@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({
   title: {
@@ -18,14 +18,19 @@ const blogSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
-  
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment',
+    },
+  ],
 })
 
-// ini mendefinisikan function toJSON, 
+// ini mendefinisikan function toJSON,
 // isinya mentranformasi document menjadi returnedObject
-blogSchema.set("toJSON", {
+blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -33,4 +38,5 @@ blogSchema.set("toJSON", {
   },
 })
 
-module.exports = mongoose.model("Blog", blogSchema)
+const model = mongoose.model('Blog', blogSchema)
+module.exports = model

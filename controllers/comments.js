@@ -4,9 +4,7 @@ const Comment = require('../models/comment')
 const middleware = require('../utils/middleware')
 
 router.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-    .populate('user', { username: 1, name: 1 })
-    .populate('comments', { content: 1 })
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
@@ -16,10 +14,7 @@ router.post('/', middleware.userExtractor, async (request, response) => {
     return response.status(401).json({ error: 'token invalid' })
   }
 
-  const blog = new Blog({
-    ...request.body,
-    user: user._id,
-  })
+  const blog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await blog.save()
   await savedBlog.populate('user', { username: 1, name: 1 })
 
@@ -27,29 +22,6 @@ router.post('/', middleware.userExtractor, async (request, response) => {
   await user.save()
 
   response.status(201).json(savedBlog)
-})
-
-// router.get('/:id/comments', async (request, response) => {
-//   const comments = await Comment.find({ blog: request.params.id })
-//   response.json(comments)
-// })
-
-router.post('/:id/comments', async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  if (!blog) {
-    return response.status(404).end()
-  }
-
-  const comment = new Comment({
-    ...request.body,
-    blog: blog._id,
-  })
-  const savedComment = await comment.save()
-
-  blog.comments = [...blog.comments, savedComment._id]
-  await blog.save()
-
-  response.status(201).json(savedComment)
 })
 
 router.put('/:id', async (request, response) => {

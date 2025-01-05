@@ -60,7 +60,9 @@ router.put('/:id', async (request, response) => {
     request.params.id,
     { ...request.body },
     { new: true, runValidators: true, context: 'query' }
-  ).populate('user', { username: 1, name: 1 })
+  )
+    .populate('user', { username: 1, name: 1 })
+    .populate('comments', { content: 1 })
 
   if (!result) {
     return response.status(404).end()

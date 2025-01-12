@@ -67,8 +67,6 @@ router.put('/:id', async (request, response) => {
   if (!result) {
     return response.status(404).end()
   }
-
-  console.log(result)
   response.json(result)
 })
 
@@ -77,23 +75,18 @@ router.delete('/:id', middleware.userExtractor, async (request, response) => {
   if (!user) {
     return response.status(401).json({ error: 'token invalid' })
   }
-
   const blog = await Blog.findById(request.params.id)
-  const userMatch =
-    user && blog ? user._id.toString() === blog.user.toString() : false
+  if (!blog) {
+    return response.status(404).end()
+  }
+  const userMatch = user._id.toString() === blog.user.toString()
   if (!userMatch) {
-    if (!blog) {
-      return response.status(404).end()
-    }
     return response.status(403).json({ error: 'delete forbidden' })
   }
-
   user.blogs = user.blogs.filter(
     (blogId) => blogId.toString() !== blog._id.toString()
   )
   await user.save()
-  //doesn't need populate, i don't think it's in use
-
   await blog.deleteOne()
   return response.json(blog)
 })
